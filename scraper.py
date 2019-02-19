@@ -19,8 +19,11 @@ def getListData():
 
     #Iterate over lines
     for index, line in listpage.items():
+
+      #the indexing breaks when it's blank
       if line != []:
         if line[0] == 'Index':
+          print(line)
           #Move along the index
           indexnum = int(line[2][:-1])
           id = listpage[indexnum + 2]
@@ -28,9 +31,9 @@ def getListData():
           time = listpage[indexnum + 12]
 
           #Replace with database commits
-          print(indexnum)
-          print(id)
-          print(time)
+          #print(indexnum)
+          #print(id)
+          #print(time)
         else:
           pass
 '''
