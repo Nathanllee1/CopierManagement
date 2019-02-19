@@ -1,0 +1,926 @@
+<!------------------------------------------------------------------------->
+<!-- Copyright (C) 2011 KYOCERA MITA Corporation.                        -->
+<!-- All rights reserved.                                                -->
+<!------------------------------------------------------------------------->
+<html dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<title>Kyocera</title>
+
+<script language="JavaScript" type="text/javascript" src="../js/jsallWLM.js"></script>
+<link rel="stylesheet" href="../css/mainBase.css">
+<script language="JavaScript" type="text/javascript">
+SelectLang(parent.lang);
+parent.currentpage = "../job/JobSts_PrnJobSts_PrnJobs.htm?arg1=0&arg2=0&arg3=1&arg7=1";
+parent.currentpageLogin = "../job/JobSts_PrnJobSts_PrnJobs.htm?arg1=0&arg2=0&arg3=1&arg7=1";
+var arrayToken = Array("JobSts_PrnJobSts_PrnJobs.htm",1,0,"");
+if("jobreset" == "jobreset")
+{
+parent.strPrnStsJobselected = "";
+parent.strSeluserId = "";
+parent.strSeluserName = "";
+parent.strSeluserJobtype  = "";
+}
+parent.jobCancelID = "";
+parent.currentpage_jobdtl = "";
+
+var searchResult = "11";
+var h_getAbpTotalCount = "30";
+var h_getAbpListCount = 10;
+var keyID =0;
+
+var seluserid = 0;
+var ifaxinstall = "Not Installed";
+var FaxCardSuppor = "Not Installed";
+var selectedusername ="";
+var selectedJobType ="";
+function reloadIframebox(sVal, accid, Jobaccname, jid) {
+parent.JobNumber = jid;
+var lastHTMLdevice = "JobSts_PrnJobSts_PrnJob_WklyDtl.htm"
+
+parent.strAccessPrintlog = 1;
+
+var hrefSource = '../job/' + lastHTMLdevice + "?arg1=0&arg2=1&arg3=" + sVal+ "&arg4=1&arg5=0&arg7=1&arg8="+accid+"&arg9="+Jobaccname+"&arg11=1";
+var iframeSourceJobStatus = '<iframe id="alphardmaedasjobStatus" name ="alphardmaedasjobStatus" style="background: transparent" allowtransparency="true" scrolling="no" frameborder="0" onload="resizeFrame(this)"; height:0px;  src="'+hrefSource+'" >You need an iframes capable browser to view this content.</iframe>';
+parent.iframeSourceJobStatus = iframeSourceJobStatus;
+flgCustom = "2";
+if(parent.document.getElementById('lbldivid') != null){
+parent.document.getElementById('lbldivid').innerHTML = mes[27]+" : "+mes[250];
+}
+if(parent.document.getElementById('lblTitleid') != null){
+parent.document.getElementById('lblTitleid').innerHTML = mes[404];
+}
+
+if(parent.document.getElementById('hiddValue') != null){
+parent.document.getElementById('hiddValue').value = "alphardmaedasjobStatus";
+}
+var curDivObj = getObj("s22");
+if(curDivObj != null) {
+curDivObj.style.display = 'block';
+}
+
+if(parent.document.getElementById('deviceid') != null){
+parent.document.getElementById('deviceid').innerHTML = iframeSourceJobStatus;
+}
+
+}
+
+function movePage()
+{
+
+location.href = parent.currentpage;
+}
+function onCheck(keyValue, selusid, username, jid, JobType)
+{
+parent.JobNumber = jid;
+parent.nJobCancelID = keyValue;
+parent.nJobKind = "0";
+parent.nJobPage = "1";
+parent.strPrnStsJobselected = keyValue;
+document.frmDel.arg03_CancelID.value= "";
+with(document)
+{
+frmDel.arg03_CancelID.value= keyValue;
+seluserid = selusid;
+selectedusername = username;
+selectedJobType = JobType;
+parent.strSeluserId = seluserid;
+parent.strSeluserName = selectedusername;
+parent.strSeluserJobtype = selectedJobType;
+}
+if(document.getElementById('selectedItemRadio') != null){
+document.getElementById('selectedItemRadio').innerHTML = '&nbsp;' + 1 + '&nbsp;'+mes[402];}
+
+return false;
+}
+function OnAddFunc(jobaccname)
+{
+var accId = "0";
+var h_getAthUserType = "Unknown";
+var h_loginUsername = "_invalid_cert_id";
+var check = "";
+
+with(document) {
+if(parent.strPrnStsJobselected)
+{
+frmDel.arg03_CancelID.value= parent.strPrnStsJobselected;
+seluserid = parent.strSeluserId;
+selectedusername = parent.strSeluserName;
+selectedJobType = parent.strSeluserJobtype;
+
+}
+with(frmDel) {
+if(arg03_CancelID.value == "")
+{
+return false;
+}
+}
+}
+if((selectedJobType == "4") || (selectedJobType == "7")){	//Restrict Fax Rx or ifax Rx from being canceled
+alert(mes[622]);
+} else if( "_mode_off" == "_mode_on" ){	//Local , Network , Advanced Authentication - on
+if( h_getAthUserType == "_login_admin" ){	//Login User With Admin Rights
+check = confirm(mes[2448]);
+if(check ==true)
+document.frmDel.submit();
+else
+return false;
+} else if(h_getAthUserType == "_login_user"){	//Login User With User Rights
+//Logged In User Self Job Cancel
+if((h_loginUsername == selectedusername && seluserid == accId) || (h_loginUsername == selectedusername && accId == 0)){
+check = confirm(mes[2448]);
+if(check ==true)
+document.frmDel.submit();
+else
+return false;
+//Othe User Job Cancel
+} else if((h_loginUsername != selectedusername && seluserid != accId) || (h_loginUsername != selectedusername && accId == 0)){
+alert(mes[624]);
+} else {
+}
+}else if(h_loginUsername == "_invalid_cert_id"){
+alert(mes[600]);
+} else {
+}
+} else if( "_mode_off" == "_mode_off" ){
+check = confirm(mes[2448]);
+if(check ==true)
+document.frmDel.submit();
+else
+return false;
+} else {
+}
+}
+
+function checkOnLoadBox()
+{
+/*
+parent.document.getElementById('panelusaged').style.display = 'none';
+parent.document.getElementById('paperid').style.display = 'none';
+parent.document.getElementById('tonerid').style.display ='none' ;
+parent.document.getElementById('stapleid').style.display = 'none';
+*/
+
+var LastUpdate = "2019/02/19 14:42:14";
+
+if(parent.document.getElementById('leftcoldiv') != null){
+parent.document.getElementById('leftcoldiv').className = "navilayer2";
+}
+var addr = "../job/JobSts_PrnJobSts_PrnJobs.htm?arg1=0&arg2=0&arg3=1&arg7=1&arg8=jobreset";
+
+var a = checkPage1(addr,"","","","",mes[27] + " :<br>" + mes[32],"","","","","","","",LastUpdate,"","");
+
+if(parent.document.getElementById('docustomdown') != null){
+parent.document.getElementById('docustomdown').style.display = 'none';
+}
+if(parent.document.getElementById('maindivindex') != null){
+parent.document.getElementById('maindivindex').style.height = '1100px';
+}
+if( parent.document.getElementById('main') != null){
+parent.document.getElementById('main').style.height = '1200px';
+}
+if(document.getElementById('docustom1') != null)
+document.getElementById('docustom1').style.display = '';
+if(document.getElementById('docustom') != null)
+document.getElementById('docustom').style.display = 'none';
+if(parent.document.getElementById('docustom1') != null)
+parent.document.getElementById('docustom1').style.display = '';
+if(parent.document.getElementById('docustom') != null)
+parent.document.getElementById('docustom').style.display = 'none';
+}
+function getChangeValue(selectobj){
+
+var changedvaltmp = selectobj.value;
+
+if( FaxCardSuppor == "Installed" && ifaxinstall != "Installed" && changedvaltmp == 7){
+changedvaltmp = 8;
+}else if( FaxCardSuppor == "Installed" && ifaxinstall != "Installed" && changedvaltmp == 8){
+changedvaltmp = 9;
+}else if( FaxCardSuppor != "Installed" && changedvaltmp == 7){
+changedvaltmp = 9;
+}else if( FaxCardSuppor != "Installed" && changedvaltmp == 6){
+changedvaltmp = 8;
+}else if( FaxCardSuppor != "Installed" && changedvaltmp == 8){
+changedvaltmp = 10;
+}
+var hrefSource = "../job/JobSts_PrnJobSts_PrnJobs.htm?arg1=0&arg2=0&arg3=1&arg7="+changedvaltmp;
+
+var iframeSourceJobStatus = '<iframe id="printingjobstatus" name ="printingjobstatus" style="background: transparent" allowtransparency="true" scrolling="no" frameborder="0" onload="resizeFrame(this)"; height:0px;  src="'+hrefSource+'" >You need an iframes capable browser to view this content.</iframe>';
+parent.iframeSourceJobStatus = iframeSourceJobStatus;
+flgCustom = "2";
+
+var curDivObj = getObj("s22");
+if(curDivObj != null){
+curDivObj.style.display = 'block';
+}
+if(parent.document.getElementById('deviceid') != null){
+if(iOSDeviceFind())
+{
+location.href = "../job/JobSts_PrnJobSts_PrnJobs.htm?arg1=0&arg2=0&arg3=1&arg7="+changedvaltmp;
+}
+else
+{
+parent.document.getElementById('deviceid').innerHTML = iframeSourceJobStatus;
+}
+}
+
+
+}
+function Add8ColPrintingJobsMatrixCommonPrint1(sCol1Label, sCol1Data, sCol2Label, sCol2Data, sCol3Label, sCol3Data, sCol4Label, sCol4Data, sCol5Label,
+sCol5Data, sCol6Label, sCol6Data, sCol7Label, sCol8Label, sCol9Label,cmbPrintingType,JobKey,JobLogFlag, selectitem, Jobaccno,Jobaccname,Jobdomain,jobStatus,Jobloginid) {
+var titleCols = new Array(sCol1Label, sCol2Label,sCol9Label,sCol3Label, sCol4Label, sCol5Label, sCol6Label, sCol7Label,sCol8Label);
+var dataCols = new Array();
+for (var i = 0; i < sCol1Data.length; i++)
+dataCols[i] = new Array(sCol1Data[i], sCol2Data[i], sCol3Data[i], sCol4Data[i], sCol5Data[i], sCol6Data[i],JobKey[i],Jobdomain[i],jobStatus[i],Jobloginid[i]);
+var str = AddStripe6PrintingJobsMatrixCommonPrint1(titleCols, dataCols, cmbPrintingType, JobLogFlag, selectitem, Jobaccno,Jobaccname);
+return str;
+}
+function GetLineTwoImage()
+{
+return '<tr height="5px" width="585px"><td style="padding-left:7px;padding-right:5px;" colspan=6 width = "570px"><div id= "line" width = "570px"></div></td></tr>';
+}
+function AddStripe6PrintingJobsMatrixCommonPrint1(titleCol, dataCol, dataColsCmb, JobLogFlag, selectitem, Jobaccno,Jobaccname) {
+
+var str = '';
+var browserCheck = whichBrs();
+jobRefresh ="1";
+
+if (browserCheck == "Internet Explorer") {
+str = '<div id ="outerdivboxIE" style="border-right:#b8b8b8 0px solid; border-left:#b8b8b8 0px solid; border-bottom:#b8b8b8 0px solid;border-top:#b8b8b8 0px solid;">';
+}
+else {
+str = '<div id ="outerdiv" style="border-right:#b8b8b8 0px solid; border-left:#b8b8b8 0px solid; border-bottom:#b8b8b8 0px solid;border-top:#b8b8b8 0px solid;">';
+}
+str += '<table id = "headerrad"  width="585px" height="26px" border="0" cellspacing="0" cellpading = "2">';
+str += '<tr valign="middle" height="33px">';
+str += '<td></td>';
+str += '<td  colspan = 10 >' + titleCol[0] + tSpace + '</td><td id="imgcommon" width = 5%></td>';
+str += '</tr>';
+str += strEndTable;
+str += '<table id = "contentrowtable" height="64px" width="585px" border="0" cellspacing="0" cellpadding="2" >';
+if (dataColsCmb != "") {
+str += '<tr height="53px" valign="center"><td width=2%></td><td width=10%>&nbsp;' + mes[62] + '&nbsp;:</td>';
+str += '<td width=28%>';
+str += '<select name ="addrType" id ="addrType" style="width:155px;height:23px;font-size:10pt;" onChange="getChangeValue(this)">';
+var j = 1;
+for (var i = 0; i < dataColsCmb.length; i++) {
+str += '<option value = ' + j + ' ';
+if(selectitem == j) str += 'selected';
+str += '><h1>' + dataColsCmb[i] + '</option>';
+j++;
+}
+str += '</select>';
+str += '</td>';
+}
+else {
+str += '<tr height="53px" valign="center"><td width=30%></td><td width=10%></td>';
+}
+var browserCheck = whichBrs();
+if (parent.browser == "Safari")
+str += '<td width =2px align ="center" style="padding-top: 6px;"><img height = "80%" width = 8% src="../images/verticallineBlack.png" alt="" border="0"></td>';
+else if(browserCheck == "Internet Explorer")
+{
+str += '<td width = 1%><img height = "100%" width = "1px" src="../images/verticallineBlack.png" alt="" border="0"></td>';
+//str += '<td width ="15px"  align ="right"><img  height = 100% width = 4% src="../images/verticallineBlack.png" alt="" border="0"></td>';
+}
+else
+str += '<td width =5px align ="center"><img height = 100% width = 3% src="../images/verticallineBlack.png" alt="" border="0"></td>';
+if (titleCol[0] == mes[250] && mes[272] == titleCol[6]) {
+str += '<td width=10% align="center"></td>';
+}
+else if (titleCol[0] == mes[276] && mes[272] == titleCol[6]) {
+str += '<td width=10% align="center"></td>';
+}
+else if (titleCol[0] == mes[34] && mes[272] == titleCol[6]) {
+str += '<td width=10% align="center"></td>';
+}
+//else if (titleCol[7] == mes[272]) {
+else if (JobLogFlag == "_JobLog") {
+str += '<td width=10% align="center"></td>';
+}
+else {
+if(titleCol[8] == 0) {
+if(dataCol.length > 0)
+{
+if(mes[258].length <=10)
+{
+str += '<td width=10% align="center"><font size = 1pt>' + mes[258] + '</font><br><img width = 32px height = 32px  src="../images/btn_cancel_job.png" alt="" border="0" style="cursor: hand;" onClick ="OnAddFunc(\'' +Jobaccname[0]+ '\')"></td>';
+}
+else if(mes[258].length <= 15)
+{
+str += '<td width=15% align="center"><font size = 1pt>' + mes[258] + '</font><br><img width = 32px height = 32px  src="../images/btn_cancel_job.png" alt="" border="0" style="cursor: hand;" onClick ="OnAddFunc(\'' +Jobaccname[0]+ '\')"></td>';
+
+}
+else
+{
+str += '<td width=17% align="center"><font size = 1pt>' + mes[258] + '</font><br><img width = 32px height = 32px  src="../images/btn_cancel_job.png" alt="" border="0" style="cursor: hand;" onClick ="OnAddFunc(\'' +Jobaccname[0]+ '\')"></td>';
+}
+}
+else
+{
+
+if(mes[258].length <=10)
+{
+str += '<td width=10% align="center"><font size = 1pt>' + mes[258] + '</font><br><img width = 32px height = 32px  src="../images/btn_cancel_job.png" alt="" border="0" style="cursor: hand;" onClick ="" disabled></td>';
+}
+else if(mes[258].length <= 15)
+{
+str += '<td width=15% align="center"><font size = 1pt>' + mes[258] + '</font><br><img width = 32px height = 32px  src="../images/btn_cancel_job.png" alt="" border="0" style="cursor: hand;" onClick ="" disabled></td>';
+
+}
+else
+{
+str += '<td width=17% align="center"><font size = 1pt>' + mes[258] + '</font><br><img width = 32px height = 32px  src="../images/btn_cancel_job.png" alt="" border="0" style="cursor: hand;" onClick ="" disabled></td>';
+}
+}
+
+}else{
+if(dataCol.length > 0)
+{
+if(mes[258].length <=10)
+{
+str += '<td width=10% align="center"><font size = 1pt>' + mes[258] + '</font><br><img width = 32px height = 32px  src="../images/btn_cancel_job.png" alt="" border="0" style="cursor: hand;" onClick ="OnAddFunc(\'' +Jobaccname[0]+ '\')"></td>';
+}
+else if(mes[258].length <= 15)
+{
+str += '<td width=15% align="center"><font size = 1pt>' + mes[258] + '</font><br><img width = 32px height = 32px  src="../images/btn_cancel_job.png" alt="" border="0" style="cursor: hand;" onClick ="OnAddFunc(\'' +Jobaccname[0]+ '\')"></td>';
+
+}
+else
+{
+str += '<td width=17% align="center"><font size = 1pt>' + mes[258] + '</font><br><img width = 32px height = 32px  src="../images/btn_cancel_job.png" alt="" border="0" style="cursor: hand;" onClick ="OnAddFunc(\'' +Jobaccname[0]+ '\')"></td>';
+}
+}
+else
+{
+
+if(mes[258].length <=10)
+{
+str += '<td width=10% align="center"><font size = 1pt>' + mes[258] + '</font><br><img width = 32px height = 32px  src="../images/btn_cancel_job.png" alt="" border="0" style="cursor: hand;" onClick ="" disabled></td>';
+}
+else if(mes[258].length <= 15)
+{
+str += '<td width=15% align="center"><font size = 1pt>' + mes[258] + '</font><br><img width = 32px height = 32px  src="../images/btn_cancel_job.png" alt="" border="0" style="cursor: hand;" onClick ="" disabled></td>';
+
+}
+else
+{
+str += '<td width=17% align="center"><font size = 1pt>' + mes[258] + '</font><br><img width = 32px height = 32px  src="../images/btn_cancel_job.png" alt="" border="0" style="cursor: hand;" onClick ="" disabled></td>';
+}
+}
+}
+}
+str += '<td width=60px></td>';
+str += '</tr>';
+str += GetLineTwoImage();
+str += '</table>';
+
+if(dataCol.length==0)
+{
+str += '<table id = "contentrowtable" height ="5px" width="585px" border="0" cellspacing="0" cellpadding="2" >';
+str += '<tr><td width = 100% colspan = 10 align="right"></td></tr>';
+str += '<tr valign="center"><td width = 1% rowspan = 25 ></td>';
+for (var j = 1; j < 8; j++) {
+if (titleCol[j] == '') titleCol[j] = tSpace;
+
+if (j == 1) {
+if (JobLogFlag != "_JobLog"){
+
+str += '<td align="center" width=10%>&nbsp;' + titleCol[j] + '</td>';
+}
+}
+else if (j == 2) {
+
+//if (titleCol[7] == "Result")
+if (JobLogFlag == "_JobLog")
+str += '<td align="center" width=15%>' + titleCol[j] + '</td>';
+else
+str += '<td align="left" width=15%>' + titleCol[j] + '</td>';
+}
+else if (j == 3) {
+str += '<td align="left" width=13%>' + titleCol[j] + '</td>';
+}
+else if (j == 4) {
+str += '<td align="left" width=15%>' + titleCol[j] + '</td>';
+} else if (j == 5) {
+str += '<td align="left" width=25%>' + titleCol[j] + '</td>';
+} else if (j == 6) {
+str += '<td align = "left" width=15%>' + titleCol[j] + '</td>';
+} else if (j == 7) {
+str += '<td align = "left" colspan = 3 width=10%>' + titleCol[j] + '</td>';
+} else {
+
+str += '<td width=5% valign="left">' + titleCol[j] + '</td>';
+}
+}
+str += '<td width = 1% rowspan = 25 ></td>';
+str += '</tr>';
+if(titleCol[8] != 0){
+str += GetLineTwoJobChangeScheduleIE();
+}
+str += strEndTable;
+}
+else
+{
+str += '<table id = "contentrowtable" height ="5px" width="585px" border="0" cellspacing="0" cellpadding="2" >';
+str += '<tr><td width = 100% colspan = 9 align="right"></td></tr>';
+str += '<tr valign="center"><td width = 1% rowspan = 25 ></td>';
+//if (dataCol.length != 0) {
+for (var j = 1; j < 8; j++) {
+if (titleCol[j] == '') titleCol[j] = tSpace;
+
+if (j == 1) {
+if (JobLogFlag != "_JobLog"){
+//if (titleCol[7] != "Result") {
+str += '<td align="center" width=10%>&nbsp;' + titleCol[j] + '</td>';
+}
+}
+else if (j == 2) {
+
+//if (titleCol[7] == "Result")
+if (JobLogFlag == "_JobLog")
+str += '<td align="center" width=10%>' + titleCol[j] + '</td>';
+else
+str += '<td align="left" width=12%>' + titleCol[j] + '</td>';
+}
+else if (j == 3) {
+str += '<td align="left" width=10%>' + titleCol[j] + '</td>';
+}
+else if (j == 4) {
+str += '<td align="left" width=9%>' + titleCol[j] + '</td>';
+} else if (j == 5) {
+str += '<td align="left" width=27%>' + titleCol[j] + '</td>';
+} else if (j == 6) {
+str += '<td align = "left" width=15%>' + titleCol[j] + '</td>';
+} else if (j == 7) {
+str += '<td align = "left" colspan = 3 width=30%>' + titleCol[j] + '</td>';
+} else {
+
+str += '<td width=5% valign="left">' + titleCol[j] + '</td>';
+}
+}
+//}
+str += '<td width = 1% rowspan = 25 ></td>';
+str += '</tr>';
+if(titleCol[8] != 0){
+str += GetLineTwoJobChangeScheduleIE();
+}
+
+var h_getAthUserType = "Unknown";
+var h_loginUsername = "_invalid_cert_id";
+var h_loginDomain = "_invalid_cert_id";
+var StatusValue = "status_all_user";
+
+for (var i = 0; i < dataCol.length; i++) {
+
+alternate = i;
+halfalternate = (alternate / 2);
+makewhole = (Math.floor(halfalternate));
+if (makewhole == halfalternate) { evenorodd = "even" } else evenorodd = "odd";
+if (evenorodd == "even")
+{ str += '<tr height =43px bgcolor="#d8d8d8">'; }
+else
+{ str += '<tr height =43px>'; }
+
+var radioSelect = "";
+if(parent.strPrnStsJobselected == dataCol[i][6])
+{
+radioSelect = " checked";
+}
+
+
+if (JobLogFlag != "_JobLog"){
+if(StatusValue=="status_all_user")
+{
+str += '<td  align="center" width=15% style="padding-left:10px;"><input type="radio" name="jobnumber" id = "jobnumber" ' + radioSelect +' value="" onclick="onCheck(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\',\'' + dataCol[i][0] + '\',\'' + dataCol[i][8] + '\' )">';
+str += '<a><span STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\' ,\'' + dataCol[i][0] + '\')"></span></a></td>';
+}
+if(StatusValue=="status_self_admin")
+{
+if(h_getAthUserType == "_login_user"){
+if(h_loginUsername == dataCol[i][9] && h_loginDomain == dataCol[i][7])
+{
+str += '<td  align="center" width=15% style="padding-left:10px;"><input type="radio" name="jobnumber" id = "jobnumber" ' + radioSelect +' value="" onclick="onCheck(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\' ,\'' + dataCol[i][0] + '\',\'' + dataCol[i][8] + '\')">';
+str += '<a><span STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\' ,\'' + dataCol[i][0] + '\')"></span></a></td>';
+}
+else
+{
+str += '<td  align="center" width=15% style="padding-left:10px;"><input type="radio" name="jobnumber" id = "jobnumber" ' + radioSelect +' value="" onclick="onCheck(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\',\'' + dataCol[i][0] + '\',\'' + dataCol[i][8] + '\' )">';
+str += '<a><span STYLE="cursor:pointer;cursor:hand" </span></a></td>';
+}
+}else if(h_getAthUserType == "_login_admin"){
+str += '<td  align="center" width=15% style="padding-left:10px;"><input type="radio" name="jobnumber" id = "jobnumber" ' + radioSelect +' value="" onclick="onCheck(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\' ,\'' + dataCol[i][0] + '\',\'' + dataCol[i][8] + '\')">';
+str += '<a><span STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\' ,\'' + dataCol[i][0] + '\')"></span></a></td>';
+}
+else{
+str += '<td  align="center" width=15% style="padding-left:10px;"><input type="radio" name="jobnumber" id = "jobnumber" ' + radioSelect +' value="" onclick="onCheck(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\',\'' + dataCol[i][0] + '\',\'' + dataCol[i][8] + '\' )">';
+str += '<a><span STYLE="cursor:pointer;cursor:hand" </span></a></td>';
+}
+}
+if(StatusValue=="status_admin")
+{
+if(h_getAthUserType=="_login_admin")
+{
+str += '<td  align="center" width=15% style="padding-left:10px;"><input type="radio" name="jobnumber" id = "jobnumber" ' + radioSelect +' value="" onclick="onCheck(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\' ,\'' + dataCol[i][0] + '\',\'' + dataCol[i][8] + '\')">';
+str += '<a><span STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\' ,\'' + dataCol[i][0] + '\')"></span></a></td>';
+}
+else
+{
+str += '<td  align="center" width=15% style="padding-left:10px;"><input type="radio" name="jobnumber" id = "jobnumber" ' + radioSelect +' value="" onclick="onCheck(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\' ,\'' + dataCol[i][0] + '\',\'' + dataCol[i][8] + '\')">';
+str += '<a><span STYLE="cursor:pointer;cursor:hand" </span></a></td>';
+}
+}
+}
+for (var j = 0; j < titleCol.length; j++) {
+
+if (dataCol[i][j] == '') dataCol[i][j] = tSpace;
+if (j == 0) {
+if (JobLogFlag == "_JobLog")
+str += '<td align="center" style="padding-left:10px;"><a href="#" STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\',\'' + dataCol[i][0] + '\')"><u><font id="setorange" style="font-family:Arial; font-size: 10pt;">' + dataCol[i][0] + '</font></u></a></td>';
+else
+{
+if(StatusValue=="status_all_user")
+{
+
+str += '<td align="left" style="padding-left:10px;"><a href="#" STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\',\'' + dataCol[i][0] + '\')"><u><font id="setorange" style="font-family:Arial; font-size: 10pt;">' + dataCol[i][0] + '</font></u></a></td>';
+
+}
+if(StatusValue=="status_self_admin")
+{
+if(h_getAthUserType == "_login_user"){
+if(h_loginUsername == dataCol[i][9] && h_loginDomain == dataCol[i][7])
+{
+str += '<td align="left" style="padding-left:10px;"><a href="#" STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\',\'' + dataCol[i][0] + '\')"><u><font id="setorange" style="font-family:Arial; font-size: 10pt;">' + dataCol[i][0] + '</font></u></a></td>';
+}
+else
+{
+str += '<td align="left" style="padding-left:10px;"><span>' + dataCol[i][0] + '</span></td>';
+}
+}else{
+if(h_getAthUserType == "Unknown")
+str += '<td align="left" style="padding-left:10px;"><span>' + dataCol[i][0] + '</span></td>';
+else
+str += '<td align="left" style="padding-left:10px;"><a href="#" STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\',\'' + dataCol[i][0] + '\')"><u><font id="setorange" style="font-family:Arial; font-size: 10pt;">' + dataCol[i][0] + '</font></u></a></td>';
+}
+}
+if(StatusValue=="status_admin")
+{
+if(h_getAthUserType=="_login_admin")
+{
+
+str += '<td align="left" style="padding-left:10px;"><a href="#" STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\',\'' + dataCol[i][0] + '\')"><u><font id="setorange" style="font-family:Arial; font-size: 10pt;">' + dataCol[i][0] + '</font></u></a></td>';
+}
+
+else
+{
+str += '<td align="left" style="padding-left:10px;"><span>' + dataCol[i][0] + '</span></td>';
+}
+}
+}
+}
+else if (j == 1) {
+str += '<td align="left" style="padding-left:10px;">' + dataCol[i][1] + '</td>';
+} else if (j == 2) {
+str += '<td align="left" style="padding-left:10px;"><img align="center" src="../images/' + dataCol[i][j] + '"></td>';
+} else if (j == 3) {
+if(StatusValue=="status_all_user"){
+str += '<td align="left"  style="padding-left:10px;"><table style="table-layout:fixed; width:188px;"><tr><td style="word-wrap:break-word; " ><a href="#" STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\',\'' + dataCol[i][0] + '\')"><u><font style="font-family:Arial; font-size: 10pt;" id="setorange">' + dataCol[i][3] + '</font></u></a></td></tr></table></td>';
+
+}
+if(StatusValue=="status_self_admin")
+{
+if(h_getAthUserType == "_login_user"){
+if(h_loginUsername == dataCol[i][9] && h_loginDomain == dataCol[i][7])
+{
+str += '<td align="left" style="padding-left:10px;"><table style="table-layout:fixed; width:192px;"><tr><td style="word-wrap:break-word; " ><a href="#" STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\',\'' + dataCol[i][0] + '\')"><u><font style="font-family:Arial; font-size: 10pt;" id="setorange">' + dataCol[i][3] + '</font></u></a></td></tr></table></td>';
+}
+else
+{
+str += '<td align="left" style="padding-left:10px;"><table style="table-layout:fixed; width:192px;"><tr><td style="word-wrap:break-word; " ><span><font style="font-family:Arial; font-size: 10pt;">' + dataCol[i][3] + '</font></span></td></tr></table></td>';
+}
+}else{
+if(h_getAthUserType == "Unknown")
+str += '<td align="left" style="padding-left:10px;"><table style="table-layout:fixed; width:192px;"><tr><td style="word-wrap:break-word; " ><span><font style="font-family:Arial; font-size: 10pt;">' + dataCol[i][3] + '</font></span></td></tr></table></td>';
+else
+str += '<td align="left" style="padding-left:10px;"><u><a><table style="table-layout:fixed; width:192px;"><tr><td style="word-wrap:break-word; " ><a href="#" STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\',\'' + dataCol[i][0] + '\')"><u><font style="font-family:Arial; font-size: 10pt;" id="setorange">' + dataCol[i][3] + '</font></u></a></td></tr></table></td>';
+}
+}
+if(StatusValue=="status_admin")
+{
+if(h_getAthUserType=="_login_admin")
+{
+//if(h_loginUsername == dataCol[i][9] && h_loginDomain == dataCol[i][7])
+str += '<td align="left" style="padding-left:10px;"><table style="table-layout:fixed; width:192px;"><tr><td style="word-wrap:break-word; " ><a href="#" STYLE="cursor:pointer;cursor:hand" onclick="reloadIframebox(\'' + dataCol[i][6] + '\',\'' + Jobaccno[i] + '\',\'' + Jobaccname[i] + '\',\'' + dataCol[i][0] + '\')"><u><font style="font-family:Arial; font-size: 10pt;" id="setorange">' + dataCol[i][3] + '</font></u></a></td></tr></table></td>';
+}
+else
+{
+str += '<td align="left" style="padding-left:10px;"><table style="table-layout:fixed; width:192px;"><tr><td style="word-wrap:break-word; " ><span><font style="font-family:Arial; font-size: 10pt;">' + dataCol[i][3] + '</font></span></td></tr></table></td>';
+}
+}
+
+}
+else if (j == 4) {
+str += '<td align = "left" style="padding-left:5px;"><table style="table-layout:fixed; width:70px;"><tr><td style="word-wrap:break-word; " ><div STYLE="margin-left:1px;"><font style="font-family:Arial; font-size: 10pt;">' + dataCol[i][j] + '</font></div></td></tr></table></td>';
+} else if (j == 5) {
+str += '<td align = "left" colspan = 3 style="padding-left:10px;" nowrap>' + dataCol[i][j] + '</td>';
+}
+}
+str += '</tr>';
+str +='<tr height="5px" width="585px"><td style="padding-left:2px;padding-right:2px;" colspan="9" width = "585px"><div id= "line" width = "585px"></div></td></tr>';
+}
+str += strEndTable;
+}
+output(str);
+}
+function AddPrevNextLinkJobsPrintJobStsLocal(pagelayout,fPNFlag, nCurrentPage, nLinkNum, sLinkFileName, sArgs, aArgs, spArg,h_getAbpListCount,totaljobcount)
+{
+var startjobs = 0;
+nCurrentPage = Number(nCurrentPage);
+
+if(totaljobcount > 10)
+startjobs = (nCurrentPage*10)-9;
+else if(totaljobcount == 0)
+startjobs = 0;
+else
+startjobs = 1;
+
+var maxobs = (nCurrentPage*10)+Number(h_getAbpListCount)-10 ;
+
+var Endjobs =0;
+if(totaljobcount < 10 ){
+Endjobs = h_getAbpListCount;
+}else if( totaljobcount > 10 && totaljobcount == maxobs){
+Endjobs = totaljobcount;
+}else{
+Endjobs = 10 * nCurrentPage;
+}
+
+var strSelected = startjobs+" - "+Endjobs+" / "+totaljobcount+" "+mes[270];
+var strLoad;
+if(totaljobcount == 0 || parent.strPrnStsJobselected == "")
+{
+strLoad = "&nbsp;" + 0 +" "+ mes[402];
+}
+else
+{
+strLoad = "&nbsp;" + 1 +" "+ mes[402];
+
+}
+var str = '';
+var sArg = Array();
+//sArg = InitializeArgument(sArgs);
+nCurrentPage = Number(nCurrentPage);
+var PageNum = (sArg[0] != "")? sArg.length:0;
+var LinkArgs = JointLinkArg(sArg,aArgs);
+var CeilNum = Math.floor(nCurrentPage/10) * 10;
+CeilNum = (nCurrentPage%10 == 0) ? CeilNum-10:CeilNum;
+var sLinkArgment;
+//str+= '<div id="anchor"><table width="100%"><tr><td align="center" width="80%">';
+
+var browserCheck = whichBrs();
+if (browserCheck == "Internet Explorer")
+str+= '<div id="anchor" align = "center"><table id = "contentrowIE" width="585px" border="0" cellspacing="0" cellpadding="2" ><tr height = 33px><td align="center" colspan =2 width="100%">';
+else
+str+= '<div id="anchor" align = "center"><table id = "contentrow" width="100%" border="0" cellspacing="0" cellpadding="2" ><tr height = 33px><td align="center" colspan =2 width="100%">';
+
+if(nCurrentPage !=1)
+{
+LinkArgs[PageNum] = nCurrentPage-1;
+sLinkArgment = "arg1=0&arg2=0";
+sLinkArgment = sLinkArgment + setArg(LinkArgs,3);
+if( spArg ) sLinkArgment += setArg(spArg,7);
+str+=  PrevNextLinkAnchor(sLinkFileName,sLinkArgment,'<<');
+}
+if( fPNFlag && nCurrentPage != 1)
+{
+LinkArgs[PageNum] = nCurrentPage-1;
+sLinkArgment = "arg1=0&arg2=0";
+sLinkArgment = sLinkArgment + setArg(LinkArgs,3);
+if( spArg ) sLinkArgment += setArg(spArg,7);
+//str += PrevNextLinkAnchor(sLinkFileName, sLinkArgment, "");
+}
+if( CeilNum != 0)
+{
+
+LinkArgs[PageNum] = CeilNum;
+sLinkArgment = "arg1=0&arg2=0";
+sLinkArgment = sLinkArgment + setArg(LinkArgs,3);
+if( spArg ) sLinkArgment += setArg(spArg,7);
+if( spArg ) sLinkArgment += setArg(spArg,7);
+str+=  PrevNextLinkAnchor(sLinkFileName,sLinkArgment,'-'+CeilNum);
+
+}
+for(var i=1; i<=10; i++ )
+{
+var nPage = i + CeilNum;
+if( nPage > nLinkNum)
+break;
+else if( nPage == nCurrentPage )
+str+=  '<b>'+nPage+'</b> ';
+else
+{
+LinkArgs[PageNum] = nPage;
+sLinkArgment = "arg1=0&arg2=0";
+sLinkArgment = sLinkArgment + setArg(LinkArgs,3);
+if( spArg ) sLinkArgment += setArg(spArg,7);
+str +=PrevNextLinkAnchor(sLinkFileName, sLinkArgment, nPage);
+}
+}
+if( CeilNum+10 < nLinkNum)
+{
+LinkArgs[PageNum] = CeilNum+11;
+sLinkArgment = "arg1=0&arg2=0";
+sLinkArgment = sLinkArgment + setArg(LinkArgs,3);
+if( spArg ) sLinkArgment += setArg(spArg,7);
+str+= PrevNextLinkAnchor(sLinkFileName,sLinkArgment,(CeilNum+11)+'-');
+
+
+}
+if( fPNFlag && nCurrentPage !=  nLinkNum)
+{
+LinkArgs[PageNum] = nCurrentPage+1;
+sLinkArgment = "arg1=0&arg2=0";
+sLinkArgment = sLinkArgment + setArg(LinkArgs,3);
+if( spArg ) sLinkArgment += setArg(spArg,7);
+//str+= PrevNextLinkAnchor(sLinkFileName,sLinkArgment,"");
+//str+= PrevNextLinkAnchor(sLinkFileName,sLinkArgment,"");
+//str+= PrevNextLinkAnchor(sLinkFileName,sLinkArgment,'>>');
+}
+if(nCurrentPage!=nLinkNum && totaljobcount > 0){
+LinkArgs[PageNum] = nCurrentPage+1;
+sLinkArgment = "arg1=0&arg2=0";
+sLinkArgment = sLinkArgment + setArg(LinkArgs,3);
+if( spArg ) sLinkArgment += setArg(spArg,7);
+str+= PrevNextLinkAnchor(sLinkFileName,sLinkArgment,'>>');
+}
+//str+= '</td><td align="right" style="padding-right:10px;"><font style="font-family:Arial;  font-size: 10pt; font-style:normal; font-weight:normal; text-decoration:none">'+strSelected+'</font></td></tr></table>';
+//str+= '</div>';
+//str+= '</td><td align="right" style="padding-right:10px;"><font style="font-family:Arial;  font-size: 10pt; font-style:normal; font-weight:normal; text-decoration:none">'+strSelected+'</font></td></tr></table>';
+//str+= '</td></tr></table>';
+str+= '</td></tr>';
+str+= '<tr width="100%" height = 27px>';
+str+= '<td align="left" style="padding-left:10px;" width="50%" ><font style="font-family:Arial;  font-size: 10pt; font-style:normal; font-weight:normal; text-decoration:none"><div id="selectedItemRadio">'+strLoad+'</div></font></td>';
+str+= '<td align="right" style="padding-right:10px;" width="50%" ><font style="font-family:Arial;  font-size: 10pt; font-style:normal; font-weight:normal; text-decoration:none">'+strSelected+'</font></td></tr></table>';
+str+= '</td></tr></table>';
+
+
+
+strlay = '';
+strlay += pagelayout;
+if (totaljobcount > 0) {
+var browserCheck = whichBrs();
+if (browserCheck == "Internet Explorer") {
+strlay += '<table id = "contentrowIE" width="585px" border="0" cellspacing="0" cellpadding="2" >';
+} else {
+strlay += '<table id = "contentrow" width="100%" border="0" cellspacing="0" cellpadding="2" >';
+}
+
+strlay += '<tr height = "33px"><td width="100%" colspan=2 align="center">' + str + '</td></tr>';
+// if(document == mes[507]){
+if (browserCheck == "Internet Explorer") {
+if(parent.lang == "deu" || parent.lang == "esp" || parent.lang == "fra" || parent.lang == "ita" || parent.lang == "dut"){
+strlay += '<tr width="100%" height = 27px><td align="left" width=23%><div id="selectedItem"></div></td><td align="right" width=35% nowrap style="padding-right:10px;">'+ strSelected + '</td><tr>';
+}
+else{
+
+strlay += '<tr width="100%" height = 27px><td align="left" width=18%><div id="selectedItem"></div></td><td align="right" width=35% nowrap style="padding-right:10px;">'+ strSelected + '</td><tr>';
+}
+}
+else{
+if(parent.lang == "deu" || parent.lang == "esp" || parent.lang == "fra" || parent.lang == "ita" || parent.lang == "dut"){
+strlay += '<tr width="100%" height = 27px><td align="left" width=23%><div id="selectedItem"></div></td><td align="right" width=39% nowrap style="padding-right:10px;">'+ strSelected + '</td><tr>';
+}
+else
+{
+strlay += '<tr width="100%" height = 27px><td align="left" width=18%><div id="selectedItem"></div></td><td align="right" width=39% nowrap style="padding-right:10px;">'+ strSelected + '</td><tr>';
+}
+}
+//}
+
+strlay += strEndTable;
+}
+
+str+= '</div>';
+
+output(str);
+}
+</script>
+</head>
+<body id="rightfrm" onload="checkOnLoadBox()">
+<form name="frmDel"  action="/job/set.cgi" method="post" onReset = "return movePage()" >
+<input type="hidden" name="okhtmfile" value="/job/JobSts_JobApl.htm">
+<input type="hidden" name="failhtmfile" value="/job/JobSts_JobErr.htm">
+<input type="hidden" name="func" value="reqJobCancel">
+<input type="hidden" name="arg01_JobKind" value="0">
+<input type="hidden" name="arg02_JobPage" value="0">
+<input type="hidden" name="arg03_CancelID" value="">
+<input type="hidden" name="hidden" value="">
+</form>
+<form>
+<script language="JavaScript">
+
+
+
+document.write('<div id="contentcustom">');
+var JobSelNumber = Array();
+var netcont = 5;
+var selectionval = "1";
+
+var cmbPrintingType = Array();
+cmbPrintingType[0] = mes[251];
+cmbPrintingType[1] = mes[252];
+cmbPrintingType[2] = mes[45];
+cmbPrintingType[3] = mes[253];
+cmbPrintingType[4] = mes[254];
+if(FaxCardSuppor == "Installed") {
+cmbPrintingType[netcont] = mes[47];
+netcont++;
+}
+if(ifaxinstall == "Installed"){
+cmbPrintingType[netcont] = mes[255];
+netcont++;
+}
+cmbPrintingType[netcont] = mes[256];
+netcont++;
+cmbPrintingType[netcont] = mes[257];
+netcont++;
+cmbPrintingType[netcont] = mes[279];
+if( FaxCardSuppor == "Installed" && ifaxinstall != "Installed" && selectionval == 8){
+selectionval = 7;
+}else if( FaxCardSuppor == "Installed" && ifaxinstall != "Installed" && selectionval == 9){
+selectionval = 8;
+}else if( FaxCardSuppor == "Installed" && ifaxinstall != "Installed" && selectionval == 10){
+selectionval = 8;
+}else if( FaxCardSuppor != "Installed" && selectionval == 8){
+selectionval = 6;
+}else if( FaxCardSuppor != "Installed" && selectionval == 9){
+selectionval = 7;
+}else if( FaxCardSuppor != "Installed" && selectionval == 10){
+selectionval = 8;
+}
+
+var JobType = Array();
+var JobName = Array();
+var PrintJobStatus = Array();
+var JobTime = Array();
+var Jobaccno = Array();
+var Jobaccname = Array();
+var JobKey = Array();
+var JobUsername = Array();
+var JobLoginid = Array();
+var JobDomain = Array();
+var jobStatus = Array();
+var jobnumber = "1";
+
+Index = 0;
+JobKey[Index] = "268435710";
+JobSelNumber[Index]  = "012045";
+JobUsername[Index] = "";
+/*if (parent.lang == "jpn"){
+if (JobUsername[Index].length > 11){JobUsername[Index] = wrapName(JobUsername[Index], 11);}
+}else{
+if (JobUsername[Index].length > 17){JobUsername[Index] = wrapName(JobUsername[Index], 17);}
+}*/
+JobLoginid[Index] = "";
+JobDomain[Index] = "";
+PrintJobStatus[Index] = sJobStatus[38];
+jobStatus[Index] = 1;
+JobType[Index] = Current_JobStatus[jobStatus[Index]];
+JobTime[Index] = "14:42";
+JobName[Index] = "doc01204520190219144211";
+/*if (parent.lang == "jpn"){
+if (JobName[Index].length > 11){JobName[Index] = wrapName(JobName[Index], 11);}
+}else{
+if (JobName[Index].length > 17){JobName[Index] = wrapName(JobName[Index], 17);}
+}*/
+var index1;
+index1 = 0;
+Jobaccno[index1] = "0";
+Jobaccname[index1] = "";
+var searchWord = decodeURIComponent(arrayToken[3]);
+var strResult = AddResultWords(currentPage, JobSelNumber.length, searchResult, searchWord);
+var currentPage = arrayToken[1];
+var totalPage = Math.ceil(searchResult / 10);
+var totaljobcount = 1;
+var nLinkNum = Math.ceil(totaljobcount/10);
+var frontArg = "";
+var rearArg = arrayToken.slice(2, 4);
+
+var h_getAbpListCount = "1";
+var h_getAbpTotalCount = h_getAbpListCount;
+var rearArg = arrayToken.slice(2, 4);
+
+var docbox = Add8ColPrintingJobsMatrixCommonPrint1(mes[250], JobSelNumber, mes[259], JobTime, mes[261], JobType, mes[62],
+JobName, mes[262], JobUsername, mes[50], PrintJobStatus, mes[44], jobnumber, mes[260], cmbPrintingType,JobKey,"",selectionval,Jobaccno,Jobaccname,JobDomain,jobStatus,JobLoginid);
+//AddPrevNextLinkJobsPrint(true, "1", nLinkNum, arrayToken[0], Array(0, 0), "","1",h_getAbpListCount,totaljobcount);
+AddPrevNextLinkJobsPrintJobStsLocal(docbox,true, 1, nLinkNum, arrayToken[0], Array(0, 0), "","1",h_getAbpListCount,totaljobcount);
+
+
+</script>
+</div>
+</div>
+</form>
+</body>
+</html>
