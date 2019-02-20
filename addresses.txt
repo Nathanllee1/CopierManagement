@@ -1,0 +1,8 @@
+Status
+https://10.99.21.243/job/JobSts_PrnJobSts_PrnJobs.htm?arg1=0&arg2=0&arg3=1&arg7=1
+
+Log
+https://10.99.21.243/job/JobSts_PrnJobLog_PrnJobs.htm?arg1=3&arg2=3&arg3=1&arg7=1&arg7=1
+
+Sample Detail
+https://10.99.21.243/job/JobSts_PrnJobLog_PrnJob_WklyDtl.htm?arg1=3&arg2=1&arg3=12045&arg4=1
