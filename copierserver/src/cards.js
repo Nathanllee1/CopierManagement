@@ -1,13 +1,14 @@
 import React from 'react';
-import Card from 'react-bootstrap';
 
-render() {
-  return(
+
+
+const PrinterCard = (props) => {
+  return (
     <div class='card'>
-        <h5 class='card-title'>Engineering Room</h5>
+        <h5 class='card-title'>{props.location}</h5>
     </div>
   )
-}
+};
 
 
 
