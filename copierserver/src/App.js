@@ -13,11 +13,11 @@ class App extends Component {
   state = {
     location: 'Engineering Room'
   }
-
+  /*
   for (links in urls) {
     console.log(links)
   }
-
+  */
   render() {
     return (
       <div className="App">
