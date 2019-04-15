@@ -11,9 +11,7 @@ const urls = {
 class App extends Component {
 
   state = {
-    location: 'Engineering Room',
-    status: 'Printing',
-
+    location: 'Engineering Room'
   }
   /*
   for (links in urls) {
@@ -24,11 +22,8 @@ class App extends Component {
     return (
       <div className="App">
         <TopBar />
-        <h4>Printers</h4>
         <div class='Cards'>
-
-          <br></br>
-          <PrinterCard location={this.state.location} status={this.state.status}/>
+          <PrinterCard location={this.state.location} />
         </div>
       </div>
     );

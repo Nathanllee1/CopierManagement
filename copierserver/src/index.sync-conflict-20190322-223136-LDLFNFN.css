@@ -1,0 +1,19 @@
+.App {
+  font-family: Arial;
+  margin: 20px;
+}
+
+.card {
+  flex-direction: row;
+  border-style: solid;
+  width: 200px;
+
+}
+
+.title {
+
+}
+
+.Cards {
+  display: flex;
+}
