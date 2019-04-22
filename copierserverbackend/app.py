@@ -5,7 +5,8 @@ app = Flask(__name__)
 def hello():
     return 'Welcome to the copier management backend'
 
-@app.route("/api")
+#@app.route("/api")
+#def api():
 
 
 if __name__ == "__main__":
