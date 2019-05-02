@@ -25,7 +25,7 @@ class App extends Component {
         <TopBar />
         <h4>Printers</h4>
         <div class='Cards'>
-          <PrinterCard location=``{this.state.location} status={this.state.status}/>
+          <PrinterCard location={this.state.location} status={this.state.status}/>
         </div>
       </div>
     );
