@@ -7,10 +7,12 @@ state = {
     '106A Copier 1' : {
         'ip' : '10.99.17.50',
         'status' : '',
-        'queue' : [],
+        'queue' : {},
         'type' : 'bizhub'
     },
 }
+
+
 
 s = requests.Session()
 
@@ -24,15 +26,23 @@ def login(ip):
         print(f'Other error occurred: {err}')  # Python 3.6
     else:
         return True
-
+'''
+queuetemplate = 'jobnumber' = {
+    'Status': ''
+}
+'''
 def getQueue(ip):
     dataURL = 'http://' + ip + '/wcd/job.xml'
     data = s.get(dataURL)
     soup = BeautifulSoup(data, 'html.parser')
     #print(soup.prettify)
-    rows = soup.find_all("tr").text
+    #rows = soup.find_all("tr").text
+    '''
+    for data in table
+    put it in queutemplate and replace everything in
+    '''
 
-    print(rows)
+    print(data)
 
 print(state)
 '''
@@ -55,13 +65,14 @@ def main():
     for copier in state.values():
         if copier['type'] == 'bizhub':
             if login(copier['ip']):
+                print('Logged in to ' + str(copier))
                 copier['queue'] = getQueue(copier['ip'])
             else:
                 copier['status'] = 'unavaliable'
                 print(state)
 
 
-    return render_template('index.html', state=state, len=len(state))
+    return render_template('index.html', state=state)
 
 
 if __name__ == "__main__":
