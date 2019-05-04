@@ -19,7 +19,7 @@ s = requests.Session()
 def login(ip):
     payload = 'func=PSL_LP0_TOP&AuthType=None&TrackType=Password&ExtSvType=&Lang=En&Mode=Track&trackpassword=password&ViewMode=Html&ShowDialog=Dialog'
     try:
-        s.post('http://' + ip + '/wcd/ulogin.cgi', data='payload', timeout=2)
+        s.post('http://' + ip + '/wcd/ulogin.cgi', 'payload', timeout=2)
     except HTTPError as http_err:
         print(f'HTTP error occurred: {http_err}')  # Python 3.6
     except Exception as err:
@@ -34,7 +34,8 @@ queuetemplate = 'jobnumber' = {
 def getQueue(ip):
     dataURL = 'http://' + ip + '/wcd/job.xml'
     data = s.get(dataURL)
-    soup = BeautifulSoup(data, 'html.parser')
+    #soup = BeautifulSoup(data, 'html.parser')
+    print(data.text)
     #print(soup.prettify)
     #rows = soup.find_all("tr").text
     '''
