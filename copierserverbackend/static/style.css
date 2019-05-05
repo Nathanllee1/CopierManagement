@@ -1,3 +1,45 @@
 .header {
+  margin: 20px;
+}
+
+.img {
+  height: 20%,
+  width: 20%,
+}
+
+h4 {
+  margin-left: 40px;
+}
+.copiers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-left: 20px;
+}
+
+.card {
+  width: 18rem;
   margin: 30px;
+  height: 200px;
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.status {
+  font-size: 12px;
+  font-weight: 100;
+}
+
+.queue {
+  overflow-y: scroll;
+  height:10px;
+}
+
+th, td {
+  width: 200px;
+  border-bottom: 1px solid #ddd;
+  margin: 100px;
 }

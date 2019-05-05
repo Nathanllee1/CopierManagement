@@ -5,16 +5,43 @@ import time
 
 state = {
     '106A Copier 1' : {
+        'name': '106A Copier 1',
         'ip' : '10.99.17.50',
         'status' : '',
-        'queue' : {},
-        'type' : 'bizhub'
+        'queue' : {
+            'a' : {
+                'number': 68,
+                'time': '5:00 PM'
+            },
+            'b' : {
+                'number': 69,
+                'time': '4:20 AM'
+            },
+            'c' : {
+                'number': 693,
+                'time': 'yeet'
+            }
+        },
+        'jobcount': 1,
+        'type' : 'bizhub',
     },
+    '106A Copier 2' : {
+        'name': '106A Copier 2',
+        'ip': '1234',
+        'status' : '',
+        'queue' : {},
+        'jobcount': 0,
+        'type' : 'bizhub'
+    }
 }
 
 
 
 s = requests.Session()
+
+def generateETA(jobNumber):
+    ETA = str(jobNumber * 2) + ' minutes remaining'
+    return ETA
 
 def login(ip):
     payload = 'func=PSL_LP0_TOP&AuthType=None&TrackType=Password&ExtSvType=&Lang=En&Mode=Track&trackpassword=password&ViewMode=Html&ShowDialog=Dialog'
@@ -68,6 +95,7 @@ def main():
             if login(copier['ip']):
                 print('Logged in to ' + str(copier))
                 copier['queue'] = getQueue(copier['ip'])
+                copier['status'] = 'connected'
             else:
                 copier['status'] = 'unavaliable'
                 print(state)
