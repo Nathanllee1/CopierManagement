@@ -27,13 +27,14 @@
               <th>Job #</th>
               <th>Time<th>
             </tr>
+            {% if copier['queue'] %}
             {% for items in copier['queue'].values() %}
               <tr>
                 <td>{{items['number']}}</td>
                 <td>{{items['time']}}</td>
               </tr>
             {% endfor %}
-
+            {% endif %}
           </table>
         </div>
       </div>

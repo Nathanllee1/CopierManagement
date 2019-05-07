@@ -29,16 +29,20 @@ state = {
         'name': '106A Copier 2',
         'ip': '1234',
         'status' : '',
-        'queue' : {},
+        'queue' : {
+            'b' : {
+                'number': 69,
+                'time': '4:20 AM'
+            },
+        },
         'jobcount': 0,
         'type' : 'bizhub'
     }
 }
 
 
-
 s = requests.Session()
-
+print(s)
 def generateETA(jobNumber):
     ETA = str(jobNumber * 2) + ' minutes remaining'
     return ETA
@@ -48,9 +52,9 @@ def login(ip):
     try:
         s.post('http://' + ip + '/wcd/ulogin.cgi', 'payload', timeout=2)
     except HTTPError as http_err:
-        print(f'HTTP error occurred: {http_err}')  # Python 3.6
+        print('HTTP error occurred:' + str(http_err))  # Python 3.6
     except Exception as err:
-        print(f'Other error occurred: {err}')  # Python 3.6
+        print('Other error occurred: ' + str(err))  # Python 3.6
     else:
         return True
 '''
@@ -65,6 +69,7 @@ def getQueue(ip):
     print(data.text)
     #print(soup.prettify)
     #rows = soup.find_all("tr").text
+
     '''
     for data in table
     put it in queutemplate and replace everything in
@@ -72,7 +77,6 @@ def getQueue(ip):
 
     print(data)
 
-print(state)
 '''
 while True:
     for copier in state.values():
@@ -93,7 +97,7 @@ def main():
     for copier in state.values():
         if copier['type'] == 'bizhub':
             if login(copier['ip']):
-                print('Logged in to ' + str(copier))
+                print('Logged in to ' + str(copier['name']))
                 copier['queue'] = getQueue(copier['ip'])
                 copier['status'] = 'connected'
             else:
