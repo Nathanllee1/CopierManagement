@@ -1,12 +1,11 @@
 import requests
 import xml.etree.ElementTree as ET
-from requests_xml import XMLSession
+#from requests_xml import XMLSession
 
 
 ip = "http://10.99.17.50"
 
 s = requests.Session()
-xml = XMLSession()
 payload = 'func=PSL_LP0_TOP&AuthType=None&TrackType=Password&ExtSvType=&Lang=En&Mode=Track&trackpassword=password&ViewMode=Html&ShowDialog=Dialog'
 
 post = s.post(ip + '/wcd/ulogin.cgi', data=payload)
@@ -34,9 +33,37 @@ headers = {
     'Accept-Language': 'en-US,en;q=0.9',
 }
 
-results = s.get('http://10.99.17.50/wcd/job.xml', headers=headers, cookies=cookies).text
+results = str(s.get('http://10.99.17.50/wcd/job.xml', headers=headers, cookies=cookies).text)
+
+from bs4 import BeautifulSoup
 
 
+#print(page)
+
+#print(joblist)
+
+def getData(ip):
+    page = BeautifulSoup(results, features='xml')
+
+    joblist = page.find('JobHistoryList') #change from JobList to JobHistoryList
+    #print(joblist)
+    printObject = joblist.find_all('Print')
+    print(printObject)
+    #length = printObject.find_all('TotalArraySize').string
+    #print(length)
+    counter = 0
+    for jobs in printObject:
+
+        if jobs.findChildren('JobHistory'):
+            counter += 1
+
+        else:
+            return('No Jobs')
+    length = counter
+    return(length, jobID, jobType, startTime)
+
+getData('')
+'''
 from xmljson import badgerfish as bf
 from lxml.html import Element, fromstring
 
@@ -48,15 +75,16 @@ def removebadXML(xml):
     lines = xml.readLines()
     print(lines[58])
 
-'''
+
 with open('job.xml') as job:
     results = xmltodict.parse(job.read())
 
 print(results)
-'''
+
 #print(results)
 #removebadXML(results)
 print(bf.data(fromstring(results)))
 
 newresult = map(lambda x: x.replace('<WithPrint><Enprint(get)', '').replace('<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet href="job.xsl" type="text/xsl"?>', '') for x in results)
 removebadXML(newresult)
+'''
