@@ -37,14 +37,26 @@ headers = {
 results = s.get('http://10.99.17.50/wcd/job.xml', headers=headers, cookies=cookies).text
 
 
+from xmljson import badgerfish as bf
+from lxml.html import Element, fromstring
 
-import xml.etree.ElementTree as ET
-tree = ET.ElementTree(ET.fromstring(results))
-root = tree.getroot()
+results.decode('utf-8').encode('ascii')
 
+
+import xmljson
+def removebadXML(xml):
+    lines = xml.readLines()
+    print(lines[58])
+
+'''
+with open('job.xml') as job:
+    results = xmltodict.parse(job.read())
+
+print(results)
+'''
 #print(results)
+#removebadXML(results)
+print(bf.data(fromstring(results)))
 
-#for child in root:
-#    print(child.tag, child.attrib)
-for printobject in root.findall('JobHistoryList/Print/JobHistory'):
-    print(printobject.attrib)
+newresult = map(lambda x: x.replace('<WithPrint><Enprint(get)', '').replace('<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet href="job.xsl" type="text/xsl"?>', '') for x in results)
+removebadXML(newresult)
