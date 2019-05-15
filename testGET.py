@@ -44,23 +44,31 @@ from bs4 import BeautifulSoup
 
 def getData(ip):
     page = BeautifulSoup(results, features='xml')
+    jobQueue = {
 
-    joblist = page.find('JobHistoryList') #change from JobList to JobHistoryList
+    }
+    #joblist = page.find_all('JobHistoryList') #change from JobList to JobHistoryList
+    #print(type(joblist))
     #print(joblist)
-    printObject = joblist.find_all('Print')
-    print(printObject)
-    #length = printObject.find_all('TotalArraySize').string
+    #printSection = joblist.find('Print')
+    #print(printObject)
+    #length = page.find_all('TotalArraySize').text
     #print(length)
-    counter = 0
-    for jobs in printObject:
-
-        if jobs.findChildren('JobHistory'):
+    printObject = page.find_all('JobHistory')
+    # check if it exists
+    if printObject:
+        counter = 0
+        for jobs in printObject:
+            jobID = jobs.find('JobID').text
+            jobType = jobs.find('JobType').text
+            print(jobType)
+            #print(type(printObject))
             counter += 1
-
-        else:
-            return('No Jobs')
+        print(counter)
+    else:
+        return('No Jobs')
     length = counter
-    return(length, jobID, jobType, startTime)
+        #return(length, jobID, jobType, startTime)
 
 getData('')
 '''

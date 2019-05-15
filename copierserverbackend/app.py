@@ -92,8 +92,8 @@ from flask import Flask, render_template
 app = Flask(__name__)
 
 @app.route("/")
+#change to pandas reeeeeeeeeeeeeeeeeeeeeeeeeee
 def main():
-
     for copier in state.values():
         if copier['type'] == 'bizhub':
             if login(copier['ip']):
