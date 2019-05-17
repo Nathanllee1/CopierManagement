@@ -9,6 +9,7 @@ s = requests.Session()
 payload = 'func=PSL_LP0_TOP&AuthType=None&TrackType=Password&ExtSvType=&Lang=En&Mode=Track&trackpassword=password&ViewMode=Html&ShowDialog=Dialog'
 
 post = s.post(ip + '/wcd/ulogin.cgi', data=payload)
+
 #cookies = post.cookies
 
 cookies = {
@@ -34,41 +35,39 @@ headers = {
 }
 
 results = str(s.get('http://10.99.17.50/wcd/job.xml', headers=headers, cookies=cookies).text)
-
+#results = open('job.xml', 'r')
 from bs4 import BeautifulSoup
 
-
+#print(results)
 #print(page)
 
 #print(joblist)
 
 def getData(ip):
     page = BeautifulSoup(results, features='xml')
-    jobQueue = {
-
-    }
-    #joblist = page.find_all('JobHistoryList') #change from JobList to JobHistoryList
-    #print(type(joblist))
-    #print(joblist)
-    #printSection = joblist.find('Print')
-    #print(printObject)
-    #length = page.find_all('TotalArraySize').text
-    #print(length)
-    printObject = page.find_all('JobHistory')
+    prototype = 'JobList'
+    printObject = page.find_all(prototype)
+    counter = 0
     # check if it exists
     if printObject:
-        counter = 0
+
         for jobs in printObject:
             jobID = jobs.find('JobID').text
             jobType = jobs.find('JobType').text
-            print(jobType)
+            #starttimeObject = jobs.find('CreateTime')
+            hour = jobs.find('Hour').text
+            minute = jobs.find('Minute').text
+            if len(minute) == 1:
+                minute = str(0) + minute
+            startTime = (hour + ':' + minute)
+            print(jobType, jobID, startTime)
             #print(type(printObject))
             counter += 1
-        print(counter)
+        return(length, jobID, jobType, startTime)
     else:
-        return('No Jobs')
+        print('No Jobs')
     length = counter
-        #return(length, jobID, jobType, startTime)
+
 
 getData('')
 '''

@@ -2,49 +2,17 @@ import requests
 from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
 import time
+import csv
+#real database
+import pandas
 
-state = {
-    '106A Copier 1' : {
-        'name': '106A Copier 1',
-        'ip' : '10.99.17.50',
-        'status' : '',
-        'queue' : {
-            'a' : {
-                'number': 68,
-                'time': '5:00 PM'
-            },
-            'b' : {
-                'numbd cer': 69,
-                'time': '4:20 AM'
-            },
-            'c' : {
-                'number': 693,
-                'time': 'yeet'
-            }
-        },
-        'jobcount': 1,
-        'type' : 'bizhub',
-    },
-    '106A Copier 2' : {
-        'name': '106A Copier 2',
-        'ip': '1234',
-        'status' : '',
-        'queue' : {
-            'b' : {
-                'number': 69,
-                'time': '4:20 AM'
-            },
-        },
-        'jobcount': 0,
-        'type' : 'bizhub'
-    }
-}
-
+database = pandas.read_csv("database.csv")
+print(database)
 
 s = requests.Session()
-print(s)
-def generateETA(jobNumber):
-    ETA = str(jobNumber * 2) + ' minutes remaining'
+
+def generateETA(length):
+    ETA = str(length * 2) + ' minutes remaining'
     return ETA
 
 def login(ip):
@@ -57,55 +25,64 @@ def login(ip):
         print('Other error occurred: ' + str(err))  # Python 3.6
     else:
         return True
-'''
-queuetemplate = 'jobnumber' = {
-    'Status': ''
-}
-'''
-def getQueue(ip):
-    dataURL = 'http://' + ip + '/wcd/job.xml'
-    data = s.get(dataURL)
-    #soup = BeautifulSoup(data, 'html.parser')
-    print(data.text)
-    #print(soup.prettify)
-    #rows = soup.find_all("tr").text
 
-    '''
-    for data in table
-    put it in queutemplate and replace everything in
-    '''
+def getData(ip):
+    cookies = {'selno': 'En', 'vm': 'Html','wd': 'y','uatype': 'NN','lang': 'En','ID': 'cbadf4c56bebf949dddc37cd47f838b4',  'usr': 'J_ACT',}
+    headers = {'Connection': 'keep-alive','Cache-Control': 'max-age=0','Upgrade-Insecure-Requests': '1', 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36', 'DNT': '1', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3','Referer': 'http://10.99.17.50/wcd/system.xml', 'Accept-Encoding': 'gzip, deflate', 'Accept-Language': 'en-US,en;q=0.9',}
 
-    print(data)
+    results = str(s.get('http://' + ip + '/wcd/job.xml', headers=headers, cookies=cookies).text)
 
-'''
-while True:
-    for copier in state.values():
-        if copier['type'] == 'bizhub':
-            if login(copier['ip']):
-                copier['queue'] = getQueue(copier['ip'])
-            else:
-                copier['status'] = 'unavaliable'
-                print(state)
-    time.sleep(100)
-'''
+    page = BeautifulSoup(results, features='xml')
+    prototype = 'JobList'
+    printObject = page.find_all(prototype)
+
+    # check if it exists (currently not working)
+    if printObject:
+        counter = 0
+        for jobs in printObject:
+            jobID = jobs.find('JobID').text
+            jobType = jobs.find('JobType').text
+            #starttimeObject = jobs.find('CreateTime')
+            hour = jobs.find('Hour').text
+            minute = jobs.find('Minute').text
+            if len(minute) == 1:
+                minute = str(0) + minute
+            startTime = (hour + ':' + minute)
+            print(jobType, jobID, startTime)
+            #print(type(printObject))
+            counter += 1
+        print(counter)
+    else:
+        print('No Jobs')
+    length = counter
+
+    #dataframe it
+    queue = [length, jobID, jobType, startTime]
+    #queue = pandas.DataFrame([data])
+    #print(queue)
+    return(queue)
+
+
 from flask import Flask, render_template
 app = Flask(__name__)
 
 @app.route("/")
-#change to pandas reeeeeeeeeeeeeeeeeeeeeeeeeee
 def main():
-    for copier in state.values():
-        if copier['type'] == 'bizhub':
-            if login(copier['ip']):
-                print('Logged in to ' + str(copier['name']))
-                copier['queue'] = getQueue(copier['ip'])
-                copier['status'] = 'connected'
+    rowcounter = 0
+    print(database.shape[0])
+    for index, row in database.iterrows():
+        if row['Type'] == 'bizhub':
+            print('uyes')
+            if login(copier['IP']):
+                print('Logged in to ' + str(copier['Name']))
+                row['Queue'] = getData(row['IP'])
+                row['Status'] = 'connected'
             else:
-                copier['status'] = 'unavaliable'
-                print(state)
+                row['Status'] = 'unavaliable'
 
-
-    return render_template('index.html', state=state)
+        rowcounter += 1
+    print(database.to_dict())
+    return render_template('index.html', state=database.to_dict())
 
 
 if __name__ == "__main__":
