@@ -3,7 +3,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-
+  <title>Oakland Tech Copier Queue</title>
 </head>
 
 <body>
@@ -12,28 +12,32 @@
   <h4>Copiers</h4>
   <div class='copiers'>
 
-    {% for copier in state.values() %}
+    {% for copier in state %}
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">{{copier['name']}}</h5>
-          <h5 class="status">{{copier['status']}}</h5>
+          <h5 class="card-title">{{copier['Name']}}</h5>
+          <h5 class="eta">{{copier['eta']}}</h5>
+          <h5 class="status">{{copier['Status']}}</h5>
           {% if copier['jobcount'] == 1 %}
-            <p class="jobcount"><b>{{copier['jobcount']}}</b> Job</p>
+            <p class="jobcount"><b>{{copier['JobCount']}}</b> Job</p>
           {% else %}
-            <p class="jobcount"><b>{{copier['jobcount']}}</b> Jobs</p>
+            <p class="jobcount"><b>{{copier['JobCount']}}</b> Jobs</p>
           {% endif %}
           <table class="queue">
             <tr>
               <th>Job #</th>
-              <th>Time<th>
+              <th>Type</th>
+              <th>Start Time</th>
             </tr>
-            {% if copier['queue'] %}
-            {% for items in copier['queue'].values() %}
-              <tr>
-                <td>{{items['number']}}</td>
-                <td>{{items['time']}}</td>
-              </tr>
-            {% endfor %}
+            {% if copier['Queue'] %}
+              {% for items in copier['Queue'] %}
+                <tr>
+                  <td>{{items['jobID']}}</td>
+                  <td>{{items['jobType']}}</td>
+                  <td>{{items['startTime']}}</td>
+                  <td>{{items['eta']}}
+                </tr>
+              {% endfor %}
             {% endif %}
           </table>
         </div>

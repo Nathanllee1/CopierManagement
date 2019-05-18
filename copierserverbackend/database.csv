@@ -1,2 +1,3 @@
 Name,IP,Status,Queue,JobCount,Type
-106A Copier 1,10.99.17.50,,,,
+106A Copier 1,10.99.19.6,'’,[],'’,Bizhub
+106A Copier 2,10.99,'’,[],'’,Bizhub
