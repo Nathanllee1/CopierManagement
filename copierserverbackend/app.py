@@ -16,6 +16,7 @@ def generateETA(length): #take number of originals * copies
     return ETA
 
 def login(ip):
+    '''
     payload = 'func=PSL_LP0_TOP&AuthType=None&TrackType=Password&ExtSvType=&Lang=En&Mode=Track&trackpassword=password&ViewMode=Html&ShowDialog=Dialog'
     try:
         s.post('http://' + ip + '/wcd/ulogin.cgi', 'payload', timeout=2)
@@ -25,8 +26,9 @@ def login(ip):
         print('Other error occurred: ' + str(err))  # Python 3.6
     else:
         return True
+    '''
+    return True
 
-length =  0#this won't work with multiple printer
 
 def getData(ip):
     print('Getting data from ' + ip)
@@ -42,10 +44,7 @@ def getData(ip):
     '''
     results = open('job.xml', 'r')
     page = BeautifulSoup(results, features='xml')
-    prototype = 'Job'
     printObject = page.find_all('Job')
-    # check if it exists (currently not working)
-    counter = 0
 
     for jobs in printObject:
         jobID = jobs.find('JobID').text
@@ -59,15 +58,17 @@ def getData(ip):
         startTime = (hour + ':' + minute)
         print(jobType, jobID, startTime)
 
-        counter += 1
-        eta = generateETA(counter)
+        status = jobs.find('Status').text
+        documentNumber = int(jobs.find('DocumentNumber').text)
+        copyNumber = int(jobs.find('CopyNumber').text)
 
-        queue = {'jobID':jobID, 'jobType':jobType, 'startTime':startTime, 'eta':eta}
-        return(queue)
+        totalpages = documentNumber * copyNumber
 
-    print(counter)
-    length = counter
+        eta = str(totalpages * 1.24)
 
+        queue = {'jobID':jobID, 'jobType':jobType, 'startTime':startTime, 'eta':eta, 'status':status, 'totalpages':str(totalpages)}
+        print(queue)
+    return(queue)
 
 
 
@@ -77,13 +78,15 @@ app = Flask(__name__)
 @app.route("/")
 def main():
     print('Request received...updating')
+
     for copierObject in database:
+        copierObject['Queue'] = []
         if copierObject['Type'] == 'Bizhub':
             if login(copierObject['IP']):
                 print('Logged in to ' + str(copierObject['Name']))
-                copierObject['Queue'] = getData(copierObject['IP'])
+                copierObject['Queue'].append(getData(copierObject['IP']))
                 copierObject['Status'] = 'Connected'
-                copierObject['JobCount'] = length
+                copierObject['JobCount'] = len(copierObject['Queue'])
             else:
                 print('unavaliable')
                 copierObject['Status'] = 'unavaliable'
