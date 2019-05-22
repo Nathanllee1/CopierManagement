@@ -1,19 +1,14 @@
-ie#indexer
-def GenerateIndex(response):
+#Get lists
+def getKyoceraData(ip):
+    listpage = open('sampleresponse.txt', 'r')
     lines = {}
     index = 0
-    for line in response:
+    for line in listPage:
       line = line.split()
       dictionary = {index : line}
       lines.update(dictionary)
       index += 1
 
-    return lines
-
-#Get lists
-def getListData():
-    listpage = open('sampleresponse.txt', 'r')
-    listpage = GenerateIndex(listpage)
     #print(listpage)
     IDList = []
 
@@ -31,9 +26,9 @@ def getListData():
           time = listpage[indexnum + 12]
 
           #Replace with database commits
-          #print(indexnum)
-          #print(id)
-          #print(time)
+          print(indexnum)
+          print(id)
+          print(time)
         else:
           pass
 '''
@@ -52,4 +47,4 @@ def getListData():
                 else:
                     pass
 '''
-getListData()
+getKyoceraData('df')

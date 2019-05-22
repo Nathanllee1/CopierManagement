@@ -10,17 +10,49 @@
 h4 {
   margin-left: 40px;
 }
-.copiers {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  margin-left: 20px;
+
+.btn {
+  width: 120px;
+  padding: 1px;
 }
 
-.card {
-  width: 25rem;
-  margin: 30px;
-  height: 200px;
+
+@media (max-width: 576px) {
+  .copiers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: middle;
+    margin-left: 20px;
+  }
+
+  .card {
+    width: 25rem;
+    margin: 30px;
+    height: 200px;
+    border: none;
+  }
+}
+
+@media (min-width: 576px) {
+  .card {
+    width: 25rem;
+    margin: 30px;
+    height: 200px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+  }
+
+  .copiers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-left: 20px;
+  }
+}
+
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
 }
 
 .card-title {
@@ -41,5 +73,5 @@ h4 {
 th, td {
   width: 200px;
   border-bottom: 1px solid #ddd;
-  margin: 100px;
+  margin: 50px;
 }

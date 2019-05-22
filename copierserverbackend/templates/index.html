@@ -4,6 +4,7 @@
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
   <title>Oakland Tech Copier Queue</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
@@ -13,11 +14,14 @@
   <div class='copiers'>
 
     {% for copier in state %}
-      <div class="card">
+      <div class="card" id="{{copier['Status']}}">
         <div class="card-body">
+
           <h5 class="card-title">{{copier['Name']}}</h5>
+          <button type="button" class="btn btn-outline-danger">Mark as broken</button>
+
           <h5 class="eta">{{copier['eta']}}</h5>
-          <h5 class="status">{{copier['Status']}}</h5>
+          <!--<h5 class="status">{{copier['Status']}}</h5>-->
           {% if copier['jobcount'] == 1 %}
             <p class="jobcount"><b>{{copier['JobCount']}}</b> Job</p>
           {% else %}
@@ -28,6 +32,7 @@
               <th>Job #</th>
               <th>Type</th>
               <th>Start Time</th>
+              <th>Time Left</th>
             </tr>
             {% if copier['Queue'] %}
               {% for items in copier['Queue'] %}
@@ -44,7 +49,7 @@
       </div>
     {% endfor %}
   </div>
-
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script type='text/javascript'>
     jQuery(document).ready(function(){
       $(".card").on('mouseenter', () => {
