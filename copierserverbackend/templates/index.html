@@ -9,18 +9,19 @@
 
 <body>
   <h1 class='header'>Oakland Tech Copier Queues</h1>
+  <div class='map'>
+    <img src="{{ url_for('static', filename='maps/original.png')}}" style="width:674px;height:auto;" id="map">
+  </div>
 
   <h4>Copiers</h4>
   <div class='copiers'>
-
     {% for copier in state %}
       <div class="card" id="{{copier['Status']}}">
         <div class="card-body">
-
-          <h5 class="card-title">{{copier['Name']}}</h5>
+          <h5 class="card-title" pictureName="{{copier['Picture']}}">{{copier['Name']}}</h5>
           <button type="button" class="btn btn-outline-danger">Mark as broken</button>
 
-          <h5 class="eta">{{copier['eta']}}</h5>
+          <h5 class="eta">{{copier['ETA']}}</h5>
           <!--<h5 class="status">{{copier['Status']}}</h5>-->
           {% if copier['jobcount'] == 1 %}
             <p class="jobcount"><b>{{copier['JobCount']}}</b> Job</p>
@@ -28,19 +29,20 @@
             <p class="jobcount"><b>{{copier['JobCount']}}</b> Jobs</p>
           {% endif %}
           <table class="queue">
+
+            {% if copier['Queue'] %}
             <tr>
               <th>Job #</th>
               <th>Type</th>
               <th>Start Time</th>
               <th>Time Left</th>
             </tr>
-            {% if copier['Queue'] %}
               {% for items in copier['Queue'] %}
                 <tr>
                   <td>{{items['jobID']}}</td>
                   <td>{{items['jobType']}}</td>
                   <td>{{items['startTime']}}</td>
-                  <td>{{items['eta']}}
+                  <td>{{items['eta']}}</td>
                 </tr>
               {% endfor %}
             {% endif %}
@@ -50,15 +52,24 @@
     {% endfor %}
   </div>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script type='text/javascript'>
-    jQuery(document).ready(function(){
-      $(".card").on('mouseenter', () => {
-        $('.card').css("box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)");
-      })
+  <script>
+    $(document).ready(function(){
+      if ($(".card").attr('id') == "unavaliable") {
+        $(".card").append("background-color", "rgba(245, 245, 245, 0.4)", "opacity", "20%")
+      }
 
-      $('.card').on('mouseleave', () => {
-        $('.card').css("box-shadow: none")
-      })
+      $(".card").on('mouseenter', () => {
+        var picture = $(".card-title").attr("pictureName");
+        var url = "/static/maps/" + picture;
+        console.log(url)
+        $("img").attr("src", url)
+        $(".card").css("box-shadow", "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)");
+      });
+
+      $(".card").on('mouseleave', () => {
+        $(".card").css("box-shadow", "none");
+        $("img").attr("src", "{{ url_for('static', filename='maps/original.png')}}")
+      });
     });
   </script>
 </body>

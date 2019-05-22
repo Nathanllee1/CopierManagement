@@ -1,2 +1,7 @@
-Name,IP,Status,Queue,JobCount,Type
-106A Copier 1,10.99.19.6,'’,[],'’,Bizhub
+Name,IP,Status,Queue,ETA,JobCount,Type,Picture,Notes,,
+106A Copier 1,10.99.19.6,'’,[],,'’,Bizhub,106.png,Done,,
+106A Copier 2,,,,,,,107.png,6ft cable,,get
+Art room 1,,,,,,,art.png,12 ft cable,Today,get
+Art room 2,,,,,,,art.png,6ft cable,,get
+232 Copier 1,,,,,,,234png,12 ft cable,Ethernet switch, check
+232 Copier 2,,,,,,,235png,4 ft cable,Today,get

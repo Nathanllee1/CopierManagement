@@ -83,7 +83,7 @@ def main():
                 print('Logged in to ' + str(copierObject['Name']))
                 queueData = getData(copierObject['IP'])
                 copierObject['Queue'].append(queueData)
-                copierObject['Status'] = 'Connected'
+                copierObject['Status'] = 'connected'
                 copierObject['JobCount'] = len(copierObject['Queue'])
                 print(queueData)
                 if len(queueData) != 0:
@@ -97,10 +97,10 @@ def main():
     copierObject['ETA'] = rawTime
 
 
-
     print(database)
     return render_template('index.html', state=database)
 
 
 if __name__ == "__main__":
-    app.run(host = '0.0.0.0')
+    app.debug = True
+    app.run(host = '10.99.114.234', port=5000)
