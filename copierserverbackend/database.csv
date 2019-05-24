@@ -1,7 +1,8 @@
-Name,IP,Status,Queue,ETA,JobCount,Type,Picture,Notes,,
-106A Copier 1,10.99.19.6,'’,[],,'’,Bizhub,106.png,Done,,
-106A Copier 2,,,,,,,107.png,6ft cable,,get
-Art room 1,,,,,,,art.png,12 ft cable,Today,get
-Art room 2,,,,,,,art.png,6ft cable,,get
-232 Copier 1,,,,,,,234png,12 ft cable,Ethernet switch, check
-232 Copier 2,,,,,,,235png,4 ft cable,Today,get
+Name,IP,RealIP,Status,brokenNotes,Queue,ETA,JobCount,Type,Picture
+Test Copier,,,connected,,,0 seconds,0,Test,
+106A Copier 1,,,,,,0 seconds,0,,106.png
+106A Copier 2,,10.99.19.6,,,,0 seconds,0,,107.png
+Art room 1,,10.99.17.50,,,,0 seconds,0,,art.png
+Art room 2,,,,,,0 seconds,0,,art.png
+232 Copier 1,,,,,,0 seconds,0,,234png
+232 Copier 2,,,,,,0 seconds,0,,235png
